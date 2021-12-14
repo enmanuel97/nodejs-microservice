@@ -1,0 +1,15 @@
+{
+  "name": "almuerzo-gratis",
+  "version": "1.0.0",
+  "description": "Jornada de Almuerzo Gratis",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jesus Enmanuel De La Cruz",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.15"
+  }
+}
