@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  frontend:
+    build: ./frontend
+
+  cocina:
+    build: ./cocina-service
+
+  plaza:
+    build: ./plaza-service
+
+  receta:
+    build: ./receta-service
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - frontend
+      - cocina
+      - plaza
+      - receta

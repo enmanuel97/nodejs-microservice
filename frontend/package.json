@@ -4,8 +4,7 @@
   "description": "Jornada de Almuerzo Gratis",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon ./index.js",
-    "watch": "webpack --w --mode development"
+    "start": "nodemon ./src/index.js"
   },
   "author": "Jesus Enmanuel De La Cruz",
   "license": "ISC",
