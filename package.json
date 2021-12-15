@@ -4,12 +4,18 @@
   "description": "Jornada de Almuerzo Gratis",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon ./index.js",
+    "watch": "webpack --w --mode development"
   },
   "author": "Jesus Enmanuel De La Cruz",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.24.0",
     "express": "^4.17.1",
+    "express-handlebars": "^6.0.2",
+    "sweetalert2": "^11.3.0"
+  },
+  "devDependencies": {
     "nodemon": "^2.0.15"
   }
 }
