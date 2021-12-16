@@ -4,7 +4,7 @@
   "description": "Jornada de Almuerzo Gratis",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./src/index.js"
+    "start": "nodemon ./index.js --PORT=3000"
   },
   "author": "Jesus Enmanuel De La Cruz",
   "license": "ISC",
