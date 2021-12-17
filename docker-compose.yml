@@ -13,6 +13,9 @@ services:
   receta:
     build: ./receta-service
 
+  bodega:
+    build: ./bodega-service
+
   nginx:
     image: nginx:latest
     ports:
@@ -24,3 +27,4 @@ services:
       - cocina
       - plaza
       - receta
+      - bodega
