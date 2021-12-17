@@ -7,6 +7,7 @@ if(document.querySelectorAll('.start-preparation') !== null) {
 		buttonStart[i].addEventListener('click', function(e) {
 			var button = e.target;
 			const url = `${location.origin}/cocina/preparar/${button.getAttribute('data-id')}`;
+
 			axios.get(url).then(function(response) {
 				if(response.data.status === 'success') {
 					Swal.fire({
@@ -15,7 +16,7 @@ if(document.querySelectorAll('.start-preparation') !== null) {
 						type: 'success'
 					});
 					button.parentElement.parentElement.remove();
-				} else if(response.data.status == 'unavailable' && response.data.without_stock == true) {
+				} else if(response.data.status == 'without_stock') {
 					Swal.fire({
 						title: 'Sin Stock',
 						text: 'No hay stock suficiente para preparar la orden, ¿Deseas realizar una compra?',
@@ -29,47 +30,65 @@ if(document.querySelectorAll('.start-preparation') !== null) {
 						if (result.value) {
 							Swal.fire({
 								title: 'Ingrese la cantidad que deseas comprar',
-								input: 'number',
-								inputAttributes: {
-								  	min: 1
-								},
+								html: '<input id="swal-input1" type="number" min="1" class="swal2-input" placeholder="Arroz">' +
+										'<input id="swal-input2" type="number" min="1" class="swal2-input" placeholder="Queso">',
 								showCancelButton: true,
 								confirmButtonText: 'Comprar',
 								showLoaderOnConfirm: true,
 								preConfirm: (cantidad) => {
-									const url = `${location.origin}/plaza/comprar/${cantidad}`;
-									console.log(url)
+									return new Promise(function (resolve) {
+										resolve([
+										  $('#swal-input1').val(),
+										  $('#swal-input2').val()
+										])
+									});
+								},
+								onOpen: function () {
+									$('#swal-input1').focus()
 								},
 								allowOutsideClick: () => !Swal.isLoading()
 							}).then((result) => {
 								if (result.isConfirmed) {
-									Swal.fire({
-										title: '¡Listo!',
-										text: 'La compra se realizdo correctamente, ¿Deseas continuar con la preparacion?',
-										type: 'info',
-										showCancelButton: true,
-										confirmButtonColor: '#3085d6',
-										cancelButtonColor: '#d33',
-										confirmButtonText: 'Si, preparar',
-										cancelButtonText : 'No, Cancelar'
-									}).then((result) => {
-										if (result.value) {
-											const url = `${location.origin}/cocina/preparar/${button.getAttribute('data-id')}`;
-											axios.get(url).then(function(response) {
-												if(response.data.status === 'success') {
-													Swal.fire({
-														title: '¡Listo!',
-														text: 'La orden se ha preparado correctamente',
-														type: 'success'
-													});
-													button.parentElement.parentElement.remove();
-												} else {
-													Swal.fire({
-														title: 'Error',
-														text: 'Hubo un error al preparar la orden intente mas tarde',
-														type: 'error'
+									const url = `${location.origin}/plaza/comprar/${cantidad}`;
+									console.log(url)
+									
+									axios.get(url).then(function(response) {
+										if(response.data.status === 'success') {
+											Swal.fire({
+												title: '¡Listo!',
+												text: 'La compra se realizo correctamente, ¿Deseas continuar con la preparacion?',
+												type: 'info',
+												showCancelButton: true,
+												confirmButtonColor: '#3085d6',
+												cancelButtonColor: '#d33',
+												confirmButtonText: 'Si, preparar',
+												cancelButtonText : 'No, Cancelar'
+											}).then((result) => {
+												if (result.value) {
+													const url = `${location.origin}/cocina/preparar/${button.getAttribute('data-id')}`;
+													axios.get(url).then(function(response) {
+														if(response.data.status === 'success') {
+															Swal.fire({
+																title: '¡Listo!',
+																text: 'La orden se ha preparado correctamente',
+																type: 'success'
+															});
+															button.parentElement.parentElement.remove();
+														} else {
+															Swal.fire({
+																title: 'Error',
+																text: 'Hubo un error al preparar la orden intente mas tarde',
+																type: 'error'
+															});
+														}
 													});
 												}
+											});
+										} else {
+											Swal.fire({
+												title: 'Error',
+												text: 'Hubo un error al comprar, intente mas tarde',
+												type: 'error'
 											});
 										}
 									});
