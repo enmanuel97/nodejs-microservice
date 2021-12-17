@@ -4,7 +4,7 @@ import Swal from 'sweetalert2';
 if(document.querySelectorAll('.start-preparation') !== null) {
 	var buttonStart = document.querySelectorAll('.start-preparation');
 	for(var i = 0; i < buttonStart.length; i++) {
-		buttonStart[i].addEventListener('click', function(e) {
+		buttonStart[i].addEventListener('click', (e) => {
 			var button = e.target;
 			const url = `${location.origin}/cocina/preparar/${button.getAttribute('data-id')}`;
 
@@ -51,7 +51,7 @@ if(document.querySelectorAll('.start-preparation') !== null) {
 								if (result.isConfirmed) {
 									const url = `${location.origin}/plaza/comprar/${cantidad}`;
 									console.log(url)
-									
+
 									axios.get(url).then(function(response) {
 										if(response.data.status === 'success') {
 											Swal.fire({
@@ -104,7 +104,6 @@ if(document.querySelectorAll('.start-preparation') !== null) {
 					});
 				}
 			});
-			console.log(url);
 		});
 	}
 }
