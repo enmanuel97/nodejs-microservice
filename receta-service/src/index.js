@@ -1,12 +1,15 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 
-app.use(express.json());
+app.use(cors());
 
-app.get('/api/receta', (req, res) => {
-	res.send('Hello World from Receta Service!');
-});
+app.use('/api/receta', require('./routes'));
 
-app.listen(process.env.PORT, () => {
-	console.log("Receta Service Start on port: " + process.env.PORT);
+// app.listen(process.env.PORT, () => {
+// 	console.log("Receta Service Start on port: " + process.env.PORT)
+// });
+
+app.listen(3003, () => {
+	console.log("Receta Service Start on port: 3003")
 });

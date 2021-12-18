@@ -1,13 +1,16 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 
+app.use(cors());
 app.use(express.json());
-// Endpoint que se usara para comprar los ingredientes
-// https://recruitment.alegra.com/api/farmers-market/buy 
-app.get('/api/bodega', (req, res) => {
-	res.send('Hello World from Bodega Service!');
-});
 
-app.listen(process.env.PORT, () => {
-	console.log("Bodega Service Start on port: " + process.env.PORT);
+app.use('/api/bodega', require('./routes'));
+
+// app.listen(process.env.PORT, () => {
+// 	console.log("Bodega Service Start on port: " + process.env.PORT)
+// });
+
+app.listen(3004, () => {
+	console.log("Bodega Service Start on port: 3004")
 });

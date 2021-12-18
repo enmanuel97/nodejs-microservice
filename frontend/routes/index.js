@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const axios = require('axios');
 
 module.exports = () => {
 	router.get('/', (req, res) => {
@@ -9,33 +10,15 @@ module.exports = () => {
 		});
 	});
 
-	router.get('/hacer-pedido', (req, res) => {
-		res.redirect('/pedido-realizado');
-	});
-
-	router.get('/pedido-realizado', (req, res) => {
-		res.render('pedidoRealizado', {
-			title: 'Pedido Realizado',
-			description: 'Su pedido ha sido realizado con éxito'
-		});
-	});
-
-	router.get('/cocina', (req, res) => {
+	router.get('/cocina', async (req, res) => {
+		const { data: ingredients } = await axios.get(`http://localhost:3004/api/bodega/ingredientes`);
+		const { data: pedidos } = await axios.get(`http://localhost:3001/api/cocina/ultimos-pedidos`);
+		
 		res.render('cocina', {
 			title: 'Cocina',
 			description: 'Área de la cocina',
-			ingredients: [
-				{ name: 'tomato', quantity: 2 },
-				{ name: 'lemon', quantity: 2 },
-				{ name: 'potato', quantity: 2 },
-				{ name: 'rice', quantity: 2 },
-				{ name: 'ketchup', quantity: 2 },
-				{ name: 'lettuce', quantity: 2 },
-				{ name: 'onion', quantity: 2 },
-				{ name: 'cheese', quantity: 2 },
-				{ name: 'meat', quantity: 2 },
-				{ name: 'chicken', quantity: 2 },
-			]
+			ingredients,
+			pedidos
 		});
 	});
 

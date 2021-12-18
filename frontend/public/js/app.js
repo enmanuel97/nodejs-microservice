@@ -1,12 +1,44 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
+require('regenerator-runtime/runtime');
+
+if(document.querySelector('#hacer-pedido') !== null) {
+	document.querySelector('#hacer-pedido').addEventListener('click', async e => {
+		e.preventDefault();
+
+		try {
+			const pedido = await axios.post(`http://localhost:3001/api/cocina/recibir-pedido`, {});
+			// const pedido = await axios.post(`${location.origin}/api/cocina/recibir-pedido`, {});
+			
+			if(pedido.status === 200) {
+				Swal.fire({
+					title: 'Pedido realizado',
+					text: 'Tu pedido ha sido recibido, en breve te contactaremos',
+					icon: 'success'
+				});
+			} else {
+				Swal.fire({
+					title: 'Error',
+					text: 'Hubo un error al realizar el pedido, intentalo de nuevo',
+					icon: 'error'
+				});
+			}
+		} catch (error) {
+			Swal.fire({
+				title: 'Error',
+				text: 'Hubo un error al realizar el pedido, intentalo de nuevo',
+				icon: 'error'
+			});
+		}
+	});
+}
 
 if(document.querySelectorAll('.start-preparation') !== null) {
 	var buttonStart = document.querySelectorAll('.start-preparation');
 	for(var i = 0; i < buttonStart.length; i++) {
 		buttonStart[i].addEventListener('click', (e) => {
 			var button = e.target;
-			const url = `${location.origin}/cocina/preparar/${button.getAttribute('data-id')}`;
+			const url = `${location.origin}/cocina/preparar`;
 
 			axios.get(url).then(function(response) {
 				if(response.data.status === 'success') {
