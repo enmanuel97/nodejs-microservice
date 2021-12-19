@@ -11,15 +11,14 @@ exports.getTodoEnBodega = async (req, res) => {
 	}
 }
 
-exports.getInventarioBodega = async (req, res) => {
-	const Op = db.Op;
-
+exports.getInventarioBodega = async (req, res) => {	
 	try {
-		const { ingrendientes } = req.params;
+		const { ingredientes } = req.params;
+		
 		const inventario = await db.Bodega.findAll({
 			where: {
-				ingredients: {
-					[Op.like]: `%${ingrendientes}%`
+				name: {
+					[db.Op.in]: ingredientes.split(',')
 				}
 			}
 		});
@@ -31,20 +30,40 @@ exports.getInventarioBodega = async (req, res) => {
 	}
 }
 
-exports.updateCantidad = async (req, res) => {
+exports.actualizarInventario = async (req, res) => {
 	try {
-		const { id } = req.params;
-		const { cantidad } = req.body;
-		const inventario = await db.Bodega.update({
-			cantidad
-		}, {
+		const { ingredients } = req.body;
+		const {type} = req.params;
+
+		let ingredientsString = '';
+		for (let i = 0; i < ingredients.length; i++) {
+			ingredientsString += `${ingredients[i].name},`;
+		}
+		
+		const inventarioActual = await db.Bodega.findAll({
 			where: {
-				id
+				name: {
+					[db.Op.in]: ingredientsString.slice(0, -1).split(',')
+				}
 			}
 		});
+		
+		for (let i = 0; i < inventarioActual.length; i++) {
+			let ingrediente = inventarioActual[i];
+			for (let j = 0; j < ingredients.length; j++) {
+				if (ingrediente.name === ingredients[j].name) {
+					if(type === 'agregar') {
+						ingrediente.cantidad += ingredients[j].quantity;
+					} else {
+						ingrediente.cantidad -= ingredients[j].quantity;
+					}
+				}
+			}
+			await ingrediente.save();
+		}
+		
 		res.status(200).json({
-			inventario,
-			message: 'Cantidad actualizada correctamente'
+			message: 'Inventario actualizado'
 		});
 	} catch (error) {
 		res.status(500).json({

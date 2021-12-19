@@ -9,7 +9,7 @@ function model(sequelize) {
     };
 
 	const options = {
-		tableName: 'receta',
+		tableName: 'recetas',
 		timestamps: false
 	};
 	

@@ -8,10 +8,10 @@
 			<div class="row">
 				<div class="col-md-3">
 					<h3>Ingredientes</h3>
-					<ul class="list-group">
+					<ul class="list-group" id="lista-ingredientes">
 						{{#each ingredients}}
 						<li class="list-group-item d-flex justify-content-between align-items-center">
-							<a href="javascript:void(0);" data-name="{{name}}" class="ingredient">
+							<a href="javascript:void(0);" data-id="{{id}}" data-name="{{name}}" class="ingredient">
 								{{name}}
 							</a>
 							<span class="badge bg-primary rounded-pill">{{cantidad}}</span>
@@ -22,43 +22,35 @@
 				</div>
 				<div class="col-md-9">
 					<div class="row" id="#ultimos-pedidos">
-						{{#each pedidos}}
-							<div class="col-md-4 pb-4">
-								<div class="card">
-									<h5 class="card-header">Orden # {{id}}</h5>
-									<div class="card-body">
-										<h5 class="card-title">Special title treatment</h5>
-										<ul class="list-group">
-											<li class="list-group-item d-flex justify-content-between align-items-center">
-												tomato
-												<span class="badge bg-primary rounded-pill">2</span>
-											</li>
-											<li class="list-group-item d-flex justify-content-between align-items-center">
-												lemon
-												<span class="badge bg-primary rounded-pill">2</span>
-											</li>
-											<li class="list-group-item d-flex justify-content-between align-items-center">
-												potato
-												<span class="badge bg-primary rounded-pill">2</span>
-											</li>
-											<li class="list-group-item d-flex justify-content-between align-items-center">
-												rice
-												<span class="badge bg-primary rounded-pill">2</span>
-											</li>
-											<li class="list-group-item d-flex justify-content-between align-items-center">
-												ketchup
-												<span class="badge bg-primary rounded-pill">2</span>
-											</li>
-										</ul>
-										{{!-- {{#if status}} --}}
-											<button type="button" data-id="{{id}}" class="btn btn-primary w-100 mt-3 start-preparation">Empezar preparacion</button>
-										{{!-- {{else}} --}}
-											{{!-- <button type="button" data-id="{{id}}" class="btn btn-success w-100 mt-3">En Proceso</button> --}}
-										{{!-- {{/if}} --}}
+						{{#if pedidos.length}}
+							{{#each pedidos}}
+								<div class="col-md-4 pb-4">
+									<div class="card">
+										<h5 class="card-header">Orden # {{id}}</h5>
+										<div class="card-body">
+											<h5 class="card-title">{{recetaName}}</h5>
+											<ul class="list-group">
+												{{#each (stringToArray recetaIngredients)}}
+												<li class="list-group-item d-flex justify-content-between align-items-center">
+													{{name}}
+													<span class="badge bg-primary rounded-pill">{{quantity}}</span>
+												</li>
+												{{/each}}
+											</ul>
+											{{#if status}}
+												<button type="button" data-id="{{id}}" class="btn btn-primary w-100 mt-3 start-preparation">Empezar preparacion</button>
+											{{else}}
+												<button type="button" data-id="{{id}}" class="btn btn-success w-100 mt-3">En Proceso</button>
+											{{/if}}
+										</div>
 									</div>
 								</div>
+							{{/each}}
+						{{else}}
+							<div class="col-md-12 text-center">
+								<h3>No hay pedidos</h3>
 							</div>
-						{{/each}}
+						{{/if}}
 					</div>
 				</div>
 			</div>
@@ -81,11 +73,8 @@
 											<th>Cantidad</th>
 										</tr>
 									</thead>
-									<tbody>
-										<tr>
-											<td>17/12/2021</td>
-											<td>15</td>
-										</tr>
+									<tbody id="historial-table">
+										
 									</tbody>
 								</table>
 							</div>

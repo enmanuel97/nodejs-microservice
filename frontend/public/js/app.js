@@ -7,8 +7,7 @@ if(document.querySelector('#hacer-pedido') !== null) {
 		e.preventDefault();
 
 		try {
-			const pedido = await axios.post(`http://localhost:3001/api/cocina/recibir-pedido`, {});
-			// const pedido = await axios.post(`${location.origin}/api/cocina/recibir-pedido`, {});
+			const pedido = await axios.post(`http://localhost:3000/cocina/recibir-pedido`, {});
 			
 			if(pedido.status === 200) {
 				Swal.fire({
@@ -36,106 +35,9 @@ if(document.querySelector('#hacer-pedido') !== null) {
 if(document.querySelectorAll('.start-preparation') !== null) {
 	var buttonStart = document.querySelectorAll('.start-preparation');
 	for(var i = 0; i < buttonStart.length; i++) {
-		buttonStart[i].addEventListener('click', (e) => {
+		buttonStart[i].addEventListener('click', async (e) => {
 			var button = e.target;
-			const url = `${location.origin}/cocina/preparar`;
-
-			axios.get(url).then(function(response) {
-				if(response.data.status === 'success') {
-					Swal.fire({
-						title: '¡Listo!',
-						text: 'La orden se ha preparado correctamente',
-						type: 'success'
-					});
-					button.parentElement.parentElement.remove();
-				} else if(response.data.status == 'without_stock') {
-					Swal.fire({
-						title: 'Sin Stock',
-						text: 'No hay stock suficiente para preparar la orden, ¿Deseas realizar una compra?',
-						type: 'error',
-						showCancelButton: true,
-						confirmButtonColor: '#3085d6',
-						cancelButtonColor: '#d33',
-						confirmButtonText: 'Si, comprar',
-						cancelButtonText : 'No, Cancelar'
-					}).then((result) => {
-						if (result.value) {
-							Swal.fire({
-								title: 'Ingrese la cantidad que deseas comprar',
-								html: '<input id="swal-input1" type="number" min="1" class="swal2-input" placeholder="Arroz">' +
-										'<input id="swal-input2" type="number" min="1" class="swal2-input" placeholder="Queso">',
-								showCancelButton: true,
-								confirmButtonText: 'Comprar',
-								showLoaderOnConfirm: true,
-								preConfirm: (cantidad) => {
-									return new Promise(function (resolve) {
-										resolve([
-										  $('#swal-input1').val(),
-										  $('#swal-input2').val()
-										])
-									});
-								},
-								onOpen: function () {
-									$('#swal-input1').focus()
-								},
-								allowOutsideClick: () => !Swal.isLoading()
-							}).then((result) => {
-								if (result.isConfirmed) {
-									const url = `${location.origin}/plaza/comprar/${cantidad}`;
-									console.log(url)
-
-									axios.get(url).then(function(response) {
-										if(response.data.status === 'success') {
-											Swal.fire({
-												title: '¡Listo!',
-												text: 'La compra se realizo correctamente, ¿Deseas continuar con la preparacion?',
-												type: 'info',
-												showCancelButton: true,
-												confirmButtonColor: '#3085d6',
-												cancelButtonColor: '#d33',
-												confirmButtonText: 'Si, preparar',
-												cancelButtonText : 'No, Cancelar'
-											}).then((result) => {
-												if (result.value) {
-													const url = `${location.origin}/cocina/preparar/${button.getAttribute('data-id')}`;
-													axios.get(url).then(function(response) {
-														if(response.data.status === 'success') {
-															Swal.fire({
-																title: '¡Listo!',
-																text: 'La orden se ha preparado correctamente',
-																type: 'success'
-															});
-															button.parentElement.parentElement.remove();
-														} else {
-															Swal.fire({
-																title: 'Error',
-																text: 'Hubo un error al preparar la orden intente mas tarde',
-																type: 'error'
-															});
-														}
-													});
-												}
-											});
-										} else {
-											Swal.fire({
-												title: 'Error',
-												text: 'Hubo un error al comprar, intente mas tarde',
-												type: 'error'
-											});
-										}
-									});
-								}
-							})
-						}
-					})
-				} else {
-					Swal.fire({
-						title: '¡Error!',
-						text: 'Ha ocurrido un error al preparar la orden',
-						type: 'error'
-					});
-				}
-			});
+			await prepararReceta(button);
 		});
 	}
 }
@@ -143,7 +45,7 @@ if(document.querySelectorAll('.start-preparation') !== null) {
 if(document.querySelectorAll('.ingredient') !== null) {
 	var ingredientes = document.querySelectorAll('.ingredient');
 	for(var i = 0; i < ingredientes.length; i++) {
-		ingredientes[i].addEventListener('click', function(e) {
+		ingredientes[i].addEventListener('click', async function(e) {
 			var ingrediente = e.target;
 
 			var myModal = new bootstrap.Modal(document.getElementById('history-modal'), {
@@ -153,10 +55,104 @@ if(document.querySelectorAll('.ingredient') !== null) {
 			myModal.show();
 			
 			document.querySelector('#history-modal .modal-title #ingredient-name').textContent = '/ '+ingrediente.getAttribute('data-name');
+			document.querySelector("#historial-table").innerHTML = '';
 			
-			const url = `${location.origin}/plaza/history/${ingrediente.getAttribute('data-name')}`;
+			// const url = `${location.origin}/plaza/history/${ingrediente.getAttribute('data-name')}`;
+			const url = `http://localhost:3000/plaza/historial/${ingrediente.getAttribute('data-id')}`;
 
-			console.log(url);
+			const {data: response} = await axios.get(url);
+			
+			response.historial.forEach(element => {
+				var row = document.createElement('tr');
+				row.innerHTML = `
+					<td>${element.date}</td>
+					<td>${element.quantity}</td>
+				`;
+				document.querySelector('#history-modal .modal-body table tbody').appendChild(row);
+			});
 		});
 	}
+}
+
+async function prepararReceta(button) {
+	const url = `http://localhost:3000/cocina/preparar/${button.getAttribute('data-id')}`;
+
+	const response = await axios.get(url);
+
+	if(response.data.status === 'success') {
+		Swal.fire({
+			title: '¡Listo!',
+			text: 'La orden se ha preparado correctamente',
+			type: 'success'
+		});
+		button.parentElement.parentElement.remove();
+		await updateTablaIngredientes();
+	} else if(response.data.status == 'without_stock') {
+		var ingredientWithoutStock = response.data.ingredientWithoutStock;
+	
+		Swal.fire({
+			title: 'Sin Stock',
+			text: 'No hay stock suficiente para preparar la orden, ¿Deseas realizar una compra?',
+			type: 'error',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Si, comprar',
+			cancelButtonText : 'No, Cancelar'
+		}).then((result) => {
+			if (result.value) {
+				const url = `http://localhost:3000/plaza/hacer-compra`;
+
+				axios.post(url, {
+					ingredients: ingredientWithoutStock
+				}).then(function(compraResponse) {
+					if(compraResponse.data.status === 'success') {
+						Swal.fire({
+							title: '¡Listo!',
+							text: 'La compra se sometio correctamente, ¿Deseas continuar con la preparacion?',
+							type: 'info',
+							showCancelButton: true,
+							confirmButtonColor: '#3085d6',
+							cancelButtonColor: '#d33',
+							confirmButtonText: 'Si, preparar',
+							cancelButtonText : 'No, Cancelar'
+						}).then((result) => {
+							if (result.value) {
+								prepararReceta(button);
+							}
+						});
+					} else {
+						Swal.fire({
+							title: 'Error',
+							text: compraResponse.data.message,
+							type: 'error'
+						});
+					}
+				});
+			}
+		})
+	} else {
+		Swal.fire({
+			title: '¡Error!',
+			text: 'Ha ocurrido un error al preparar la orden',
+			type: 'error'
+		});
+	}
+}
+
+async function updateTablaIngredientes() {
+	document.querySelector("#lista-ingredientes").innerHTML = '';
+	const { data: ingredients } = await axios.get(`http://localhost:3000/bodega/ingredientes`);
+		ingredients.forEach(ingredient => {
+
+		var li = document.createElement('li');
+		li.className = 'list-group-item d-flex justify-content-between align-items-center';
+		li.innerHTML = `
+			<a href="javascript:void(0);" data-id="${ingredient.id}" data-name="${ingredient.name}" class="ingredient">
+				${ingredient.name}
+			</a>
+			<span class="badge bg-primary rounded-pill">${ingredient.cantidad}</span>
+		`;
+		document.querySelector('#lista-ingredientes').appendChild(li);
+	});
 }

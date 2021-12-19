@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const recetaController = require('../controllers/receta.controller');
+const plazaController = require('../controllers/plaza.controller');
 
-router.get('/', recetaController.getReceta);
-
+router.post('/hacer-compra', plazaController.hacerCompra);
+router.get('/historial/:id', plazaController.historial);
 module.exports = router;

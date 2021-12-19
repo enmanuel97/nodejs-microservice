@@ -1,6 +1,6 @@
 const config = require('./config');
 const mysql = require('mysql2/promise');
-const { Sequelize, Op } = require('sequelize');
+const { Sequelize, Op, QueryTypes } = require('sequelize');
 
 module.exports = db = {};
 
@@ -14,6 +14,8 @@ async function initialize() {
 
     const sequelize = new Sequelize(database, user, password, { dialect: 'mysql' });
     db.Op = Op;
+    db.QueryTypes = QueryTypes;
+    db.query = sequelize.query.bind(sequelize);
     db.Pedidos = require('../models/pedidos.model')(sequelize);
 
     await sequelize.sync({ alter: true });

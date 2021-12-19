@@ -1,6 +1,6 @@
 const config = require('./config');
 const mysql = require('mysql2/promise');
-const { Sequelize } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 
 module.exports = db = {};
 
@@ -13,7 +13,8 @@ async function initialize() {
     await connection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\`;`);
 
     const sequelize = new Sequelize(database, user, password, { dialect: 'mysql' });
-
+    
+    db.Op = Op;
     db.Bodega = require('../models/bodega.model')(sequelize);
     
     await sequelize.sync({ alter: true });
@@ -25,7 +26,7 @@ async function seedsBodegaTable() {
     if (count === 0) {
         await db.Bodega.bulkCreate([
             { name: 'tomato' },
-            { name: 'lemon'},
+            { name: 'lemon' },
             { name: 'potato' },
             { name: 'rice' },
             { name: 'ketchup' },

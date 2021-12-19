@@ -1,6 +1,6 @@
 const config = require('./config');
 const mysql = require('mysql2/promise');
-const { Sequelize } = require('sequelize');
+const { Sequelize, QueryTypes } = require('sequelize');
 
 module.exports = db = {};
 
@@ -13,23 +13,10 @@ async function initialize() {
     await connection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\`;`);
 
     const sequelize = new Sequelize(database, user, password, { dialect: 'mysql' });
-
-    db.Receta = require('../models/receta.model')(sequelize);
+    
+    db.QueryTypes = QueryTypes;
+    db.query = sequelize.query.bind(sequelize);
+    db.HistorialCompras = require('../models/historialCompras.model')(sequelize);
     
     await sequelize.sync({ alter: true });
-    await seedsRecetaTable();
 }
-
-async function seedsRecetaTable() {
-    const count = await db.Receta.count();
-    if (count === 0) {
-        await db.Receta.bulkCreate([
-            { name: 'Pizza', ingredients: 'Pan, queso, jamón, aceitunas'},
-            { name: 'Hamburguesa', ingredients: 'Pan, queso, jamón, aceitunas' },
-            { name: 'Tortilla', ingredients: 'Pan, queso, jamón, aceitunas'},
-            { name: 'Ensalada', ingredients: 'Pan, queso, jamón, aceitunas' },
-            { name: 'Pollo', ingredients: 'Pan, queso, jamón, aceitunas' }
-        ]);
-    }
-}
-

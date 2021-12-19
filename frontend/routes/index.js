@@ -11,59 +11,25 @@ module.exports = () => {
 	});
 
 	router.get('/cocina', async (req, res) => {
-		const { data: ingredients } = await axios.get(`http://localhost:3004/api/bodega/ingredientes`);
-		const { data: pedidos } = await axios.get(`http://localhost:3001/api/cocina/ultimos-pedidos`);
 		
+		const { data: ingredients } = await axios.get(`http://localhost:3000/bodega/ingredientes`);
+		const { data: pedidos } = await axios.get(`http://localhost:3000/cocina/ultimos-pedidos/1,2`);
+
 		res.render('cocina', {
 			title: 'Cocina',
 			description: 'Área de la cocina',
 			ingredients,
-			pedidos
+			pedidos: pedidos.pedidos
 		});
 	});
 
-	router.get('/cocina/historial-pedidos', (req, res) => {
+	router.get('/cocina/historial-pedidos', async (req, res) => {
+		const { data: pedidos } = await axios.get(`http://localhost:3000/cocina/ultimos-pedidos/3`);
+
 		res.render('historialPedidos', {
 			title: 'Historial de pedidos',
 			description: 'Historial de pedidos',
-			orders: [
-				{
-					id: 1,
-					date: '12/12/12',
-					recipeName: 'Pizza',
-					ingredients: [
-						{ name: 'tomato', quantity: 2 },
-						{ name: 'lemon', quantity: 2 },
-						{ name: 'potato', quantity: 2 },
-						{ name: 'rice', quantity: 2 },
-						{ name: 'ketchup', quantity: 2 },
-					]
-				},
-				{
-					id: 2,
-					date: '12/12/12',
-					recipeName: 'Pizza',
-					ingredients: [
-						{ name: 'tomato', quantity: 2 },
-						{ name: 'lemon', quantity: 2 },
-						{ name: 'potato', quantity: 2 },
-						{ name: 'rice', quantity: 2 },
-						{ name: 'ketchup', quantity: 2 },
-					]
-				},
-				{
-					id: 3,
-					date: '12/12/12',
-					recipeName: 'Pizza',
-					ingredients: [
-						{ name: 'tomato', quantity: 2 },
-						{ name: 'lemon', quantity: 2 },
-						{ name: 'potato', quantity: 2 },
-						{ name: 'rice', quantity: 2 },
-						{ name: 'ketchup', quantity: 2 },
-					]
-				},
-			]
+			pedidos: pedidos.pedidos
 		});
 	});
 
