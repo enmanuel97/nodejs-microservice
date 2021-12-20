@@ -7,15 +7,35 @@ services:
 
   cocina:
     build: ./cocina-service
+    links:
+      - mysql:mysql
+    depends_on:
+      - mysql
+    command: ["./wait-for-it.sh", "mysql:3306"]
 
   plaza:
     build: ./plaza-service
+    links:
+      - mysql:mysql
+    depends_on:
+      - mysql
+    command: ["./wait-for-it.sh", "mysql:3306"]
 
   receta:
     build: ./receta-service
+    links:
+      - mysql:mysql
+    depends_on:
+      - mysql
+    command: ["./wait-for-it.sh", "mysql:3306"]
 
   bodega:
     build: ./bodega-service
+    links:
+      - mysql:mysql
+    depends_on:
+      - mysql
+    command: ["./wait-for-it.sh", "mysql:3306"]
 
   nginx:
     image: nginx:latest
@@ -30,16 +50,16 @@ services:
       - receta
       - bodega
       
-  db:
+  mysql:
     image: mysql:5.7
     platform: linux/amd64
     environment:
       MYSQL_DATABASE: 'almuerzo_gratis'
       MYSQL_ALLOW_EMPTY_PASSWORD: true
     ports:
-      - '3306:3306'
+      - "3307:3306"
     expose:
-      - '3306'
+      - '3307'
     volumes:
       - my-db:/var/lib/mysql
 
