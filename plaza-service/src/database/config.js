@@ -1,9 +1,8 @@
 module.exports = {
 	database: {
-		host: "mysql",
-		port: 3306,
-		user: "root",
-		password: "",
-		database: "almuerzo_gratis"
+		host: 'mysql-db',
+		user: 'alegra',
+		password: 'alegra',
+		database: 'almuerzo_gratis',
 	}
 };

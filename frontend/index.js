@@ -18,10 +18,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes());
 
-app.listen(3000, () => {
-	console.log('FrontEnd App started on port ' + 3000);
+app.listen(4000, () => {
+	console.log('FrontEnd App started on port ' + 4000);
 });
-
-// app.listen(process.env.PORT, () => {
-// 	console.log('FrontEnd App started on port ' + process.env.PORT);
-// });

@@ -1,7 +1,12 @@
 FROM node:14
-COPY . .
-WORKDIR /.
+
+RUN mkdir -p /app
+WORKDIR /app
+
+COPY package.json /app
+
+COPY . /app
+
 RUN npm install
-ENV PORT 3004
-EXPOSE 3004
-ENTRYPOINT ["npm", "start"]
+
+CMD ["node", "index.js"]

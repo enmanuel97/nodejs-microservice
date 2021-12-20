@@ -13,7 +13,10 @@ async function initialize() {
     const connection = await mysql.createConnection({ host, port, user, password });
     await connection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\`;`);
 
-    const sequelize = new Sequelize(database, user, password, { dialect: 'mysql' });
+    const sequelize = new Sequelize(database, user, password, { 
+        host: host,
+        dialect: 'mysql' 
+    });
 
     db.Receta = require('../models/receta.model')(sequelize);
     

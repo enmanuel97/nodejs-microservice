@@ -3,7 +3,7 @@ const axios = require('axios');
 
 exports.recibirPedido = async (req, res) => {
 	try {
-		const receta = await axios.get(`http://localhost:8080/api/receta`);
+		const receta = await axios.get(`http://localhost:4003/api/receta`);
 		const pedido = await db.Pedidos.create(
 			{
 				recetaId: receta.data.id,
@@ -31,7 +31,7 @@ exports.prepararPedido = async (req, res) => {
 			}
 		});
 
-		const receta = await axios.get(`http://localhost:8080/api/receta/${pedido.recetaId}`);
+		const receta = await axios.get(`http://localhost:4003/receta/${pedido.recetaId}`);
 
 		const recipeIngredients = receta.data.ingredients;
 		let newArray = [];
@@ -46,7 +46,7 @@ exports.prepararPedido = async (req, res) => {
 		
 		let itemWithoutStock = 0;
 		let ingredientWithoutStock = [];
-		const {data: stock} = await axios.get(`http://localhost:8080/api/bodega/inventario/${ingredientsString.slice(0, -1)}`);
+		const {data: stock} = await axios.get(`http://localhost:4004/api/bodega/inventario/${ingredientsString.slice(0, -1)}`);
 		console.log(newArray, stock);
 		for (let i = 0; i < stock.length; i++) {
 			let ingrediente = newArray.filter(item => item.name === stock[i].name)[0];
@@ -63,7 +63,7 @@ exports.prepararPedido = async (req, res) => {
 				ingredientWithoutStock
 			});
 		} else {
-			await axios.post(`http://localhost:8080/api/bodega/actualizar-inventario/retirar`, {
+			await axios.post(`http://localhost:4004/api/bodega/actualizar-inventario/retirar`, {
 				ingredients: newArray
 			});
 

@@ -1,55 +1,89 @@
-version: "3"
+version: "3.4"
+
+x-common-variables: &common-variables
+  MYSQL_USER: alegra
+  MYSQL_PASSWORD: alegra
+  MYSQL_DATABASE: almuerzo_gratis
 
 services:
 
+  mysql-db:
+    image: mysql:5.7
+    container_name: mysql_container
+    environment:
+      <<: *common-variables
+      MYSQL_HOST: localhost
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 3306:3306
+    restart: unless-stopped
+
   frontend:
     build: ./frontend
+    container_name: frontend_container
+    depends_on:
+      - mysql-db
+    environment:
+      <<: *common-variables
+      MYSQL_HOST_IP: mysql-db
+    ports:
+      - 4000:4000
+    links:
+      - mysql-db
+    command: npm start
 
   cocina:
     build: ./cocina-service
+    container_name: cocina_container
+    depends_on:
+      - mysql-db
+    environment:
+      <<: *common-variables
+      MYSQL_HOST_IP: mysql-db
+    ports:
+      - 4001:4001
     links:
-      - mysql
+      - mysql-db
+    command: npm start
 
   plaza:
     build: ./plaza-service
+    container_name: plaza_container
+    depends_on:
+      - mysql-db
+    environment:
+      <<: *common-variables
+      MYSQL_HOST_IP: mysql-db
+    ports:
+      - 4002:4002
     links:
-      - mysql
+      - mysql-db
+    command: npm start
 
   receta:
     build: ./receta-service
+    container_name: receta_container
+    depends_on:
+      - mysql-db
+    environment:
+      <<: *common-variables
+      MYSQL_HOST_IP: mysql-db
+    ports:
+      - 4003:4003
     links:
-      - mysql
+      - mysql-db
+    command: npm start
 
   bodega:
     build: ./bodega-service
-    links:
-      - mysql
-
-  nginx:
-    image: nginx:latest
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    container_name: bodega_container
     depends_on:
-      - frontend
-      - cocina
-      - plaza
-      - receta
-      - bodega
-      
-  mysql:
-    image: mysql:5.7
-    platform: linux/amd64
+      - mysql-db
     environment:
-      MYSQL_DATABASE: 'almuerzo_gratis'
-      MYSQL_ALLOW_EMPTY_PASSWORD: true
+      <<: *common-variables
+      MYSQL_HOST_IP: mysql-db
     ports:
-      - "3306:3306"
-    expose:
-      - '3306'
-    volumes:
-      - my-db:/var/lib/mysql
-
-volumes:
-  my-db:
+      - 4004:4004
+    links:
+      - mysql-db
+    command: npm start

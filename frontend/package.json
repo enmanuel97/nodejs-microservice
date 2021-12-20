@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon ./index.js --PORT=3000",
+    "dev": "nodemon ./index.js",
     "watch": "webpack --watch --mode development"
   },
   "author": "Jesus Enmanuel De La Cruz",
