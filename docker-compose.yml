@@ -1,6 +1,7 @@
 version: "3"
 
 services:
+
   frontend:
     build: ./frontend
 
@@ -28,3 +29,19 @@ services:
       - plaza
       - receta
       - bodega
+      
+  db:
+    image: mysql:5.7
+    platform: linux/amd64
+    environment:
+      MYSQL_DATABASE: 'almuerzo_gratis'
+      MYSQL_ALLOW_EMPTY_PASSWORD: true
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - my-db:/var/lib/mysql
+
+volumes:
+  my-db:

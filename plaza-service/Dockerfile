@@ -1,6 +1,6 @@
-FROM node
+FROM node:14
 COPY . .
-WORKDIR .
+WORKDIR /.
 RUN npm install
 ENV PORT 3002
 EXPOSE 3002

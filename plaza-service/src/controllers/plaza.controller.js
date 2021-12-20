@@ -23,7 +23,7 @@ exports.hacerCompra = async (req, res) => {
 					}
 				);
 
-				await axios.post(`http://localhost:3000/bodega/actualizar-inventario/agregar`, {
+				await axios.post(`http://localhost:8080/api/bodega/actualizar-inventario/agregar`, {
 					ingredients: ingredienteComprado
 				});
 			}

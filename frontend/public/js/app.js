@@ -7,7 +7,7 @@ if(document.querySelector('#hacer-pedido') !== null) {
 		e.preventDefault();
 
 		try {
-			const pedido = await axios.post(`http://localhost:3000/cocina/recibir-pedido`, {});
+			const pedido = await axios.post(`http://localhost:8080/api/cocina/recibir-pedido`, {});
 			
 			if(pedido.status === 200) {
 				Swal.fire({
@@ -58,7 +58,7 @@ if(document.querySelectorAll('.ingredient') !== null) {
 			document.querySelector("#historial-table").innerHTML = '';
 			
 			// const url = `${location.origin}/plaza/history/${ingrediente.getAttribute('data-name')}`;
-			const url = `http://localhost:3000/plaza/historial/${ingrediente.getAttribute('data-id')}`;
+			const url = `http://localhost:8080/api/plaza/historial/${ingrediente.getAttribute('data-id')}`;
 
 			const {data: response} = await axios.get(url);
 			
@@ -75,7 +75,7 @@ if(document.querySelectorAll('.ingredient') !== null) {
 }
 
 async function prepararReceta(button) {
-	const url = `http://localhost:3000/cocina/preparar/${button.getAttribute('data-id')}`;
+	const url = `http://localhost:8080/api/cocina/preparar/${button.getAttribute('data-id')}`;
 
 	const response = await axios.get(url);
 
@@ -101,7 +101,7 @@ async function prepararReceta(button) {
 			cancelButtonText : 'No, Cancelar'
 		}).then((result) => {
 			if (result.value) {
-				const url = `http://localhost:3000/plaza/hacer-compra`;
+				const url = `http://localhost:8080/api/plaza/hacer-compra`;
 
 				axios.post(url, {
 					ingredients: ingredientWithoutStock
@@ -142,7 +142,7 @@ async function prepararReceta(button) {
 
 async function updateTablaIngredientes() {
 	document.querySelector("#lista-ingredientes").innerHTML = '';
-	const { data: ingredients } = await axios.get(`http://localhost:3000/bodega/ingredientes`);
+	const { data: ingredients } = await axios.get(`http://localhost:8080/api/bodega/ingredientes`);
 		ingredients.forEach(ingredient => {
 
 		var li = document.createElement('li');
